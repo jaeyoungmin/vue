@@ -12,7 +12,9 @@
             dense
             rounded
             style="top: 14px;padding: 0 20px;"
-          >
+            v-model="search"
+            @keyup="enter"
+            >
         </v-text-field>
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
@@ -35,8 +37,21 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     export default {
-        name: 'AppBar'
+        name: 'AppBar',
+        computed: { ...mapState(["images"]) },
+        data(){
+          return {
+            search:'',
+          }
+        },
+        methods:{
+          enter(){
+            this.$store.commit('setSearchText', this.search);
+          }
+        }
+
     }
 </script>
 

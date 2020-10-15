@@ -13,7 +13,7 @@
     :url="image.download_url"
     :author="image.author"
     v-masonry-tile class="item"
-    v-for="(image, i) in images"
+    v-for="(image, i) in filteredImages"
     :key="i"
      />
     
@@ -34,13 +34,25 @@ export default {
   
   methods: {
       },
-  computed: { ...mapState(["images"]) },
+  computed: {
+     ...mapState(["images", 'searchText']) ,
+     filteredImages(){
+       if ( this.searchText ) {
+         return this.images.filter((image, i) => {
+          //  return i === Number(this.searchText);
+          return String(i).includes(String(this.searchText))
+         })
+         } else {
+         return this.images;
+       }
+     },
+     },
   beforeMount() {   
-      this.$http.get("https://picsum.photos/v2/list").then(images => {
+      this.$http.get("https://picsum.photos/v2/list?page=2&limit=100").then(images => {
          let parsedImage = images.data.map(el =>{
            let tmpArr = el.download_url.split('/')
            let deleted = tmpArr.splice(-2, 2)
-           tmpArr.push(`300/${ Math.floor(deleted[1]/deleted[0] * 300)}.webp`)
+           tmpArr.push(`400/${ Math.floor(deleted[1]/deleted[0] * 400)}.webp`)
            el.download_url = tmpArr.join('/')
            return el
         })
@@ -53,7 +65,7 @@ export default {
 
 <style lang="scss" scoped>
 .gallery{
-  padding:56px 0;
+  padding:75px 0;
 }
 .masonry-con{
   margin:0 auto;
